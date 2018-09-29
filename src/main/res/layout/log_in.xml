@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    tools:layout_editor_absoluteY="81dp">
+
+    <Button
+        android:id="@+id/for_help"
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:background="?android:attr/textColorLink"
+        android:onClick="forhelp"
+        android:text="寻求帮助"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_text" />
+
+    <Button
+        android:id="@+id/to_help"
+        android:layout_width="227dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:background="@android:color/holo_purple"
+        android:onClick="tohelp"
+        android:text="帮助他人"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/for_help" />
+
+    <TextView
+        android:id="@+id/choose_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:text="您想要？"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="@+id/for_help"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/password"
+        android:layout_width="227dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:background="@android:color/holo_blue_dark"
+        android:onClick="to_password"
+        android:text="修改密码"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/to_help" />
+</android.support.constraint.ConstraintLayout>
