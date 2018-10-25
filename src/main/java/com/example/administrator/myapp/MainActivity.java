@@ -1,17 +1,26 @@
 package com.example.administrator.myapp;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -22,27 +31,37 @@ import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.SaveCallback;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.mail.MessagingException;
+
 public class MainActivity extends AppCompatActivity {
 
     public static AVObject person;
     public static AVObject cardPick;
+    public static AVObject cardHistory;
     public static String accounts;
-    String passwords;
+    public static String topassword;
+    public static String toemail;
+    private String passwords;
     int flagaccount=0;
     int flagpassword=0;
+    public mailService ms;
+    String TAG="Main";
+    EditText account;
+    EditText password;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         person = new AVObject("persons");//后台创建一个表名为persons
         cardPick=new AVObject("cardPick");
+        cardHistory=new AVObject("card_history");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -62,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
     }
     public void go_login(View view)
     {
-        EditText account;
-        EditText password;
         account = (EditText) findViewById(R.id.login_edit1);
         password = (EditText) findViewById(R.id.login_edit2);
          accounts = account.getText().toString();
@@ -110,6 +127,68 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
     }
+
+    public void sendMail(View view){
+        account = (EditText) findViewById(R.id.login_edit1);
+        accounts = account.getText().toString();
+        Log.i(TAG,accounts);
+        if(accounts.isEmpty())
+        {
+            AlertDialog.Builder builder=new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("提示").setMessage("请输入您的账号").setNegativeButton("知道了",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                }
+            });
+            builder.create().show();
+        }
+        else {
+            AVQuery<AVObject> query2 = new AVQuery<>("persons");
+            query2.selectKeys(Arrays.asList("account", "password", "phone"));
+            query2.findInBackground(new FindCallback<AVObject>() {
+                public void done(List<AVObject> lists, AVException e) {
+                    if (e == null) {
+                        for (AVObject avObject : lists) {
+                            String account2 = avObject.getString("account");
+                            if (account2.equals(accounts)) {
+                                topassword = avObject.getString("password");
+                                toemail = avObject.getString("phone");
+                                Log.i(TAG,topassword+" "+toemail);
+                            }
+                        }
+                    } else
+                        Toast.makeText(getApplicationContext(), "网络断开啦", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            //弹出对话框判断是否发送邮件
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("提示").setMessage("是否通过邮箱找回密码？").setPositiveButton("是", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                ms = new mailService();
+                                ms.send_email(topassword,toemail);
+                            } catch (IOException ee) {
+                                ee.printStackTrace();
+                            } catch (MessagingException ee) {
+                                ee.printStackTrace();
+                            } catch (Exception ee) {
+                                ee.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+                //else
+                //Toast.makeText(getApplicationContext(), "网络断开啦", Toast.LENGTH_LONG).show();
+
+            }).setNegativeButton("否", null);
+            builder.create().show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
