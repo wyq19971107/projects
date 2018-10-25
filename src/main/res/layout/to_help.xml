@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    >
 
     <TextView
         android:id="@+id/tohelp_text1"
@@ -82,10 +84,12 @@
 
     <Button
         android:id="@+id/tohelp_button1"
-        android:layout_width="wrap_content"
+        android:layout_width="121dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="39dp"
         android:background="@android:color/holo_blue_dark"
+        android:backgroundTint="?android:attr/textColorHint"
+        android:focusableInTouchMode="false"
         android:onClick="sure_tohelp"
         android:text="提交"
         app:layout_constraintEnd_toEndOf="parent"
